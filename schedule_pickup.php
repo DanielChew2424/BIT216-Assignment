@@ -1,3 +1,4 @@
+<<<<<<< Updated upstream
 <<<<<<< HEAD
 <?php
     include 'php/dbConnect.php';
@@ -9,6 +10,51 @@
 
 =======
 >>>>>>> c9148a75ad5725725d4f23cd812dbdb9ddc9e60a
+=======
+<?php
+include 'php/dbConnect.php';
+session_start();
+if (!isset($_SESSION['email'])) {
+    header("Location: login.php");
+}
+
+// Fetch community-specific pickup schedule
+$pickupDateQuery = "SELECT DISTINCT scheduleDate FROM communities ORDER BY scheduleDate ASC";
+$pickupDateResult = mysqli_query($dbConnection, $pickupDateQuery);
+
+$pickupTimeQuery = "SELECT DISTINCT scheduleTime FROM communities ORDER BY scheduleTime ASC";
+$pickupTimeResult = mysqli_query($dbConnection, $pickupTimeQuery);
+
+
+// Handle form submission
+if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_GET['op']) && $_GET['op'] == 'confirmBtn') {
+    $pickupDate = $_POST['date'];
+    $pickupTime = $_POST['time'];
+    $wasteType = $_POST['wasteType'];
+    $email = $_SESSION['email'];
+    
+    // Fetch the user's address based on their email
+    $query = "SELECT address FROM users WHERE email='$email'";
+    $result = mysqli_query($dbConnection, $query);
+    $user = mysqli_fetch_assoc($result);
+    $pickupAddress = $user['address']; // Assigning user's address to pickupAddress
+    
+    // Insert the data into pickuphistory
+    $insertQuery = "INSERT INTO pickuphistory (address, pickupDate, pickupTime, wasteType, confirmationStatus) 
+                    VALUES ('$pickupAddress', '$pickupDate', '$pickupTime', '$wasteType', 'Pending')";
+    
+    if (mysqli_query($dbConnection, $insertQuery)) {
+        header("Location:../success.php");
+        exit();
+    } else {
+        echo "Error: " . mysqli_error($dbConnection);
+    }
+}
+?>
+
+
+
+>>>>>>> Stashed changes
 <!DOCTYPE html>
 <html lang="en">
 
@@ -38,11 +84,14 @@
             bottom: 0;
             width: 100%;
         }
+<<<<<<< Updated upstream
 <<<<<<< HEAD
 =======
 
         
 >>>>>>> c9148a75ad5725725d4f23cd812dbdb9ddc9e60a
+=======
+>>>>>>> Stashed changes
     </style>
 </head>
 
@@ -65,6 +114,7 @@
                 <div class="container">
                     <div class="row">
                         <div class="col-12 ms-auto me-auto">
+<<<<<<< Updated upstream
 <<<<<<< HEAD
                             <form id="pickupForm" method="POST" action="php/functions.php?op=confirmBtn">
                                 <div class="row">
@@ -145,13 +195,73 @@
                                 </form>
                             </div>
 >>>>>>> c9148a75ad5725725d4f23cd812dbdb9ddc9e60a
+=======
+                        <form id="pickupForm" method="POST" action="php/functions.php?op=confirmBtn">
+                            <div class="row">
+                                <!-- Pickup Date Selection -->
+                                <div class="col-md-12 my-3">
+                                    <div class="form-group">
+                                        <label for="date">Pickup Date:</label>
+                                        <select id="form_date" name="date" class="form-control" required>
+                                            <option value="">Select Pickup Date</option>
+                                            <?php while ($row = mysqli_fetch_assoc($pickupDateResult)): ?>
+                                                <option value="<?= $row['scheduleDate'] ?>"><?= $row['scheduleDate'] ?></option>
+                                            <?php endwhile; ?>
+                                        </select>
+                                    </div>
+                                </div>
+
+                                <!-- Pickup Time Selection -->
+                                <div class="col-md-12 my-3">
+                                    <div class="form-group">
+                                        <label for="time">Pickup Time:</label>
+                                        <select id="form_time" name="time" class="form-control" required>
+                                            <option value="">Select Pickup Time</option>
+                                            <?php while ($row = mysqli_fetch_assoc($pickupTimeResult)): ?>
+                                                <option value="<?= $row['scheduleTime'] ?>"><?= $row['scheduleTime'] ?></option>
+                                            <?php endwhile; ?>
+                                        </select>
+                                    </div>
+                                </div>
+
+
+                                <!-- Waste Type Selection -->
+                                <div class="col-md-12 my-3">
+                                    <div class="form-group">
+                                        <label for="wasteType">Type of Waste:</label>
+                                        <select class="form-select form-control" id="wasteType" name="wasteType" required>
+                                            <option value="">Select waste type</option>
+                                            <option value="General Waste">General Waste</option>
+                                            <option value="Household Waste">Household Waste</option>
+                                            <option value="Recyclable Waste">Recyclable Waste</option>
+                                            <option value="Hazardous Waste">Hazardous Waste</option>
+                                        </select>
+                                        <div class="invalid-feedback">
+                                            Please select at least one option.
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="row">
+                                <div class="col text-center">
+                                    <button type="submit" class="btn btn-primary">Next</button>
+                                </div>
+                            </div>
+                        </form>
+>>>>>>> Stashed changes
                         </div>
                     </div>
                 </div>
             </section>
         </div>
+<<<<<<< Updated upstream
 <<<<<<< HEAD
 
+=======
+
+        <!-- Confirmation Modal -->
+>>>>>>> Stashed changes
         <div class="modal fade" id="confirmationModal" tabindex="-1" aria-labelledby="confirmationModalLabel" aria-hidden="true">
             <div class="modal-dialog">
                 <div class="modal-content">
@@ -160,7 +270,11 @@
                         <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                     </div>
                     <div class="modal-body">
+<<<<<<< Updated upstream
                         <p><strong>Residential Address:</strong> 
+=======
+                        <p><strong>Residential Address:</strong> <span id="confirmAddress">
+>>>>>>> Stashed changes
                             <?php
                                 global $dbConnection;
                                 $email = $_SESSION['email'];
@@ -171,28 +285,45 @@
                                     echo $address['address'];
                                 }
                             ?>
+<<<<<<< Updated upstream
+=======
+                        </span>
+>>>>>>> Stashed changes
                         </p>
                         <p><strong>Date:</strong> <span id="confirmDate"></span></p>
                         <p><strong>Time:</strong> <span id="confirmTime"></span></p>
                         <p><strong>Waste Type:</strong> <span id="confirmWasteType"></span></p>
+<<<<<<< Updated upstream
                         
                     </div>
                     <div class="modal-footer justify-content-center">
                         <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
                         <button type="button" class="btn btn-primary" id="confirmBtn" action="php/functions.php?op=confirmBtn">Confirm</button>
+=======
+                    </div>
+                    <div class="modal-footer justify-content-center">
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                        <button type="button" class="btn btn-primary" id="confirmBtn">Confirm</button>
+>>>>>>> Stashed changes
                     </div>
                 </div>
             </div>
         </div>
 
+<<<<<<< Updated upstream
 =======
 >>>>>>> c9148a75ad5725725d4f23cd812dbdb9ddc9e60a
+=======
+>>>>>>> Stashed changes
     </div>
 
     <footer>
         <p>&copy; 2024 CWCL. All rights reserved.</p>
     </footer>
+<<<<<<< Updated upstream
 <<<<<<< HEAD
+=======
+>>>>>>> Stashed changes
 
     <script src="js/bootstrap/bootstrap.min.js"></script>
     <script>
@@ -219,6 +350,7 @@
         document.getElementById("confirmBtn").addEventListener("click", function () {
             document.getElementById("pickupForm").submit();
         });
+<<<<<<< Updated upstream
 
         document.getElementById("confirmBtn").addEventListener("click", function () {
             // Submit the form when the Confirm button is clicked
@@ -234,3 +366,10 @@
 
 </html>
 >>>>>>> c9148a75ad5725725d4f23cd812dbdb9ddc9e60a
+=======
+    </script>
+
+</body>
+
+</html>
+>>>>>>> Stashed changes

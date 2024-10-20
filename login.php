@@ -28,7 +28,10 @@
                     <div class="row">
                         <div class="col-lg-8 col-md-10 ms-auto me-auto">
                             <div class="register-form text-center">
+<<<<<<< Updated upstream
 <<<<<<< HEAD
+=======
+>>>>>>> Stashed changes
                             <form id="contact-form" method="post" action="php/functions.php?op=login">
                                 <div class="messages"></div>
                                 <div class="form-group">
@@ -54,6 +57,7 @@
                                   </div>
                                 </div> <button type="submit" class="btn btn-primary">Login Now</button>
                               </form>
+<<<<<<< Updated upstream
 =======
                                 <form id="contact-form" method="post" action="php/functions.php?op=login">
                                     <div class="messages"></div>
@@ -85,6 +89,8 @@
                                     </div> <button type="submit" class="btn btn-primary">Login Now</button>
                                 </form>
 >>>>>>> c9148a75ad5725725d4f23cd812dbdb9ddc9e60a
+=======
+>>>>>>> Stashed changes
                                 <div class="d-flex align-items-center text-center justify-content-center mt-4"> <span
                                         class="text-muted me-1">Don't have an account?</span>
                                     <a href="signup.php">Sign Up</a>

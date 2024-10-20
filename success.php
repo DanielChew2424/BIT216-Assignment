@@ -1,4 +1,5 @@
 <?php
+<<<<<<< Updated upstream
     session_start();
     if (!isset($_SESSION['email'])) {
         header("Location: login.php");
@@ -6,6 +7,16 @@
     }
 ?>
 
+=======
+    include 'php/dbConnect.php';
+    session_start();
+    if(!isset($_SESSION['email'])){
+        header ("Location: login.php");
+    }
+?>
+
+
+>>>>>>> Stashed changes
 <!DOCTYPE html>
 <html lang="en">
 <head>
