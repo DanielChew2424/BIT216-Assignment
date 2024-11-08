@@ -97,7 +97,7 @@ if($_GET['op'] == 'login'){
                     header("Location: ../dashboard.php");
                 }
                 elseif($role == "admin"){
-                    header("Location: ../admin_page.php");
+                    header("Location: ../admin_dashboard.php");
                 }
             }
         }
@@ -119,7 +119,6 @@ if($_GET['op'] == 'login'){
 
 }
 
-<<<<<<< HEAD
 // if($_GET['op'] == 'forgetPass'){
 //     $email = $_POST['email'];
 
@@ -184,123 +183,69 @@ if($_GET['op'] == 'login'){
 //     echo "<script>alert('Your password has been reset.');
 //         location = '../login.php';</script>";
 // }
-=======
-if($_GET['op'] == 'forgetPass'){
-    $email = $_POST['email'];
 
-    $sql = "SELECT Username FROM user";
-    $userQ = mysqli_query($dbConnection, $sql);
-    $emailFound = false;
-    while($user = mysqli_fetch_assoc($userQ)){
-        if($email == $user['Username']){
-            $emailFound = true;
+if ($_GET['op'] == 'addTimeSlot') {
+    $day = $_POST['day'];
+    $time = $_POST['time'];
+
+    // Convert to 12-hour format with AM/PM
+    $timeObj = DateTime::createFromFormat('H:i', $time);
+    $formattedTime = $timeObj->format('g:i A'); // Output as xx:xx AM/PM
+
+
+    $email = $_SESSION['email'];
+
+    $sql = "SELECT communityID FROM users WHERE email = '$email'";
+    $result = mysqli_query($dbConnection, $sql);
+    $row = mysqli_fetch_assoc($result);
+    $comID = $row['communityID'];
+
+    $sql2 = "INSERT INTO schedule (scheduleDay, scheduleTime, communityID)
+            VALUES ('$day', '$formattedTime', '$comID')";
+    mysqli_query($dbConnection, $sql2);
+    echo "<script>alert('New time slot added.');
+    location = '../admin_schedule.php';</script>";
+}
+
+    
+    if($_GET['op'] == 'deleteTimeSlot'){
+        $scheduleID = $_POST['scheduleID'];
+        $sql = "DELETE FROM schedule WHERE scheduleID = '$scheduleID'";
+        mysqli_query($dbConnection,$sql);
+        echo "<script>alert('Time slot deleted.');
+        location = '../admin_schedule.php';</script>";
+    }
+
+    if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_GET['op']) && $_GET['op'] == 'confirmBtn') {
+
+        $pickupDate = $_POST['date'];  // Update variable name to 'pickupDate'
+        $pickupTime = $_POST['time'];
+        $wasteType = $_POST['wasteType'];
+        $email = $_SESSION['email'];
+        $userID = $_POST['userID'];
+        
+        $query = "SELECT address FROM users WHERE email='$email'";
+        $result = mysqli_query($dbConnection, $query);
+        $user = mysqli_fetch_assoc($result);
+        $pickupAddress = $user['address'];
+        $pickupDate = date("Y-m-d", strtotime($_POST['date']));  // Ensures YYYY-MM-DD format
+
+        
+        $insertQuery = "INSERT INTO pickuphistory (pickupDate, pickupTime, wasteType, confirmationStatus, userID) 
+                        VALUES ('$pickupDate', '$pickupTime', '$wasteType', 'Pending', '$userID')";
+        
+        if (mysqli_query($dbConnection, $insertQuery)) {
+            exit();
+        } else {
+            echo "Error: " . mysqli_error($dbConnection);
         }
     }
-
-    if($emailFound){
     
-        $mail = new PHPMailer(true);
     
-        $mail->isSMTP();
-        $mail->Host = 'smtp.gmail.com';
-        $mail->SMTPAuth = true;
-        $mail->Username = 'localxplorerphp@gmail.com';
-        $mail->Password = 'oxrn owtv pkgy yzim';
-        $mail->SMTPSecure = 'ssl';
-        $mail->Port = 465;
-    
-        $mail->setFrom('localxplorerphp@gmail.com');
-        $mail->addAddress($email);
-    
-        $mail->isHTML(true);
-        
-        $mail->Subject = 'Reset Password';
-        $mail->Body = "Click the link below to reset your password<br>
-        http://localhost/DIP224%20ASSIGNMENT/reset_password.php?token=$email";
-    
-        $mail->send();
-    
-        echo "<script>alert('Please check your email to reset your password.');</script>";
-        
-    }
-    else{
-        echo "<script>alert('Invalid email please try again.');
-        location = '../forget_password.php';</script>";
-    }
-
-
-}
-
-if($_GET['op'] == 'resetPass'){
-    $email = $_POST['token'];
-    $pass = $_POST['password'];
-    $sql = "UPDATE user SET Password = '$pass' WHERE Username = '$email'";
-    mysqli_query($dbConnection,$sql);
-    echo "<script>alert('Your password has been reset.');
-        location = '../login.php';</script>";
-}
-
-if($_GET['op']=="firstLogin"){
-    session_start();
-    $email = $_SESSION['username'];
-    $pass = $_POST['password'];
-    $sql = "UPDATE user SET Password = '$pass' WHERE Username = '$email'";
-    mysqli_query($dbConnection,$sql);
-    echo "<script>alert('Your password has been reset.');
-        location = '../login.php';</script>";
-}
->>>>>>> deba883b65849c9c8474a02205d85ed37aefcfcd
-
-if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_GET['op']) && $_GET['op'] == 'confirmBtn') {
-    $pickupDate = $_POST['date'];
-    $pickupTime = $_POST['time'];
-    $wasteType = $_POST['wasteType'];
-<<<<<<< HEAD
-    $email = $_SESSION['email'];
-    
-    $query = "SELECT address FROM users WHERE email='$email'";
-    $result = mysqli_query($dbConnection, $query);
-    $user = mysqli_fetch_assoc($result);
-    $pickupAddress = $user['address'];
-    
-    $insertQuery = "INSERT INTO pickuphistory (pickupDate, pickupTime, wasteType, confirmationStatus) 
-                    VALUES ('$pickupDate', '$pickupTime', '$wasteType', 'Pending')";
-    
-=======
-    $address = $_POST['address'];
-    $email = $_SESSION['email'];
-
-    // Fetch the user's address based on their email
-    $query = "SELECT address FROM users WHERE email='$email'";
-    $result = mysqli_query($dbConnection, $query);
-    $user = mysqli_fetch_assoc($result);
-
-    // Insert the data into pickuphistory, including the user's address and confirmationStatus
-    $insertQuery = "INSERT INTO pickuphistory (address, pickupDate, pickupTime, wasteType, confirmationStatus) 
-                    VALUES ('$pickupAddress', '$pickupDate', '$pickupTime', '$wasteType', 'Pending')";
-                    
->>>>>>> deba883b65849c9c8474a02205d85ed37aefcfcd
-    if (mysqli_query($dbConnection, $insertQuery)) {
-        header("Location:../success.php");
-        exit();
-    } else {
-        echo "Error: " . mysqli_error($dbConnection);
-    }
-}
 
 if($_GET['op'] == "signout"){
     session_start();
     session_destroy();
     header("Location: ../login.php");
 }
-<<<<<<< HEAD
-=======
-
-if($_GET['op'] == "deleteAllImages"){
-    $id = $_GET['productID'];
-    $sql = "DELETE FROM image WHERE ProductID = $id";
-    mysqli_query($dbConnection,$sql);
-    header("Location: ../merchant_edit.php?id=" . $id);
-}
->>>>>>> deba883b65849c9c8474a02205d85ed37aefcfcd
 ?>
