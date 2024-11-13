@@ -1,0 +1,117 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Report Issue</title>
+    <link rel="stylesheet" href="css/font-awesome/all.min.css" />
+    <link rel="stylesheet" href="css/bootstrap/bootstrap.min.css" />
+    <link href="css/theme.min.css" rel="stylesheet" />
+    <link rel="stylesheet" href="css/custom.css">
+</head>
+<body>
+    <header class="header default bg-dark">
+        <div class="container">
+            <nav class="navbar navbar-static-top navbar-expand-lg">
+                <div class="container-fluid my-3">
+                    <button type="button" class="navbar-toggler" data-bs-toggle="collapse"
+                        data-bs-target=".navbar-collapse"><i class="fas fa-align-left"></i></button>
+                    <a class="navbar-brand" href="dashboard.php">CWCL</a>
+                    <div class="d-none d-sm-flex ms-auto me-5 me-lg-0 pe-4 pe-lg-0">
+                        <ul class="nav ms-1 ms-lg-2 align-self-center">
+                            <li class="sign_out nav-item pe-4 ">
+                                <a class="fw-bold" href="php/functions.php?op=signout"><i
+                                        class="fas fa-sign-out-alt pe-2"></i>Sign out</a>
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+            </nav>
+        </div>
+    </header>
+
+    <div class="page-wrapper">
+        <section class="py-5">
+            <div class="container">
+                <h1 class="my-3 text-center">Report an Issue</h1>
+            </div>
+        </section>
+        
+        <div class="container mt-5">
+            <div class="card">
+                <div class="card-body">
+                    <form id="reportIssueForm">
+                        <!-- Issue Type Selection -->
+                        <div class="form-group">
+                            <label for="issueType">Issue Type:</label>
+                            <select id="issueType" name="issueType" class="form-control" required>
+                                <option value="" disabled selected>Select issue type</option>
+                                <option value="missedPickup">Missed Pickup</option>
+                                <option value="overflowingBin">Overflowing Bin</option>
+                                <option value="illegalDumping">Illegal Dumping</option>
+                            </select>
+                        </div>
+                        
+                        <!-- Location Field -->
+                        <div class="form-group">
+                            <label for="location">Location:</label>
+                            <input type="text" id="location" name="location" class="form-control" placeholder="Enter the location" required>
+                        </div>
+                        
+                        <!-- Description Field -->
+                        <div class="form-group">
+                            <label for="description">Description:</label>
+                            <textarea id="description" name="description" class="form-control" placeholder="Describe the issue" rows="4" required></textarea>
+                        </div>
+                        
+                        <!-- Photo Upload -->
+                        <div class="form-group">
+                            <label for="photoUpload">Upload Photo (optional):</label>
+                            <input type="file" id="photoUpload" name="photoUpload" class="form-control-file" accept="image/*">
+                        </div>
+                        
+                        <div class="text-center my-5">
+                            <button type="submit" class="btn btn-primary btn-block">Submit Report</button>
+                        </div>
+                        
+                    </form>
+        
+                    <!-- Confirmation Message -->
+                    <div id="confirmationMessage" class="alert alert-success mt-4" style="display: none;">
+                        <p>Your issue has been reported successfully!</p>
+                        <p><strong>Issue ID:</strong> <span id="issueID"></span></p>
+                        <p>Status: NEW</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <footer>
+        <p>&copy; 2024 CWCL. All rights reserved.</p>
+    </footer>
+<script>
+    // Handle form submission
+    document.getElementById('reportIssueForm').addEventListener('submit', function(event) {
+        event.preventDefault();
+        
+        // Basic validation (you may add more as needed)
+        const issueType = document.getElementById('issueType').value;
+        const location = document.getElementById('location').value;
+        const description = document.getElementById('description').value;
+
+        if (!issueType || !location || !description) {
+            alert("Please fill out all required fields.");
+            return;
+        }
+
+        // Simulate issue logging and confirmation display
+        const issueID = 'ISSUE-' + Math.floor(Math.random() * 10000);
+        
+        document.getElementById('issueID').textContent = issueID;
+        document.getElementById('confirmationMessage').style.display = 'block';
+        document.getElementById('reportIssueForm').style.display = 'none';
+    });
+</script>
+
+</body>
+</html>

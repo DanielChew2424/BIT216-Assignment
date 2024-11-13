@@ -1,0 +1,201 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Waste Management Report Generator</title>
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">
+  <script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <link rel="stylesheet" href="css/font-awesome/all.min.css" />
+  <link rel="stylesheet" href="css/bootstrap/bootstrap.min.css" />
+  <link href="css/theme.min.css" rel="stylesheet" />
+  <link rel="stylesheet" href="css/custom.css">
+  <style>
+    #reportOutput {
+      margin-top: 20px;
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+      border-radius: 8px;
+      overflow: hidden;
+    }
+
+    th,
+    td {
+      padding: 15px;
+      text-align: center;
+    }
+
+    th {
+      background-color: #1e1d2d;
+      color: white;
+      text-transform: uppercase;
+    }
+
+    tr:hover {
+      background-color: #f1f1f1;
+    }
+  </style>
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+</head>
+
+<body>
+  <header class="header default bg-dark">
+    <div class="container">
+      <nav class="navbar navbar-static-top navbar-expand-lg">
+        <div class="container-fluid my-3">
+          <button type="button" class="navbar-toggler" data-bs-toggle="collapse" data-bs-target=".navbar-collapse"><i
+              class="fas fa-align-left"></i></button>
+          <a class="navbar-brand" href="dashboard.php">CWCL</a>
+          <div class="d-none d-sm-flex ms-auto me-5 me-lg-0 pe-4 pe-lg-0">
+            <ul class="nav ms-1 ms-lg-2 align-self-center">
+              <li class="sign_out nav-item pe-4 ">
+                <a class="fw-bold" href="php/functions.php?op=signout"><i class="fas fa-sign-out-alt pe-2"></i>Sign
+                  out</a>
+              </li>
+            </ul>
+          </div>
+        </div>
+      </nav>
+    </div>
+  </header>
+  <div class="page-wrapper">
+    <section class="py-5">
+      <div class="container">
+        <h1 class="my-3 text-center">Generate Reports</h1>
+      </div>
+    </section>
+  </div>
+  <div class="container">
+    <div class="dashboard">
+      <form id="reportForm" class="mx-3">
+        <div class="row">
+          <div class="col-4 my-3">
+            <label for="reportType">Report Type:</label>
+            <select id="reportType">
+              <option value="pickup">Pickup Statistics</option>
+              <option value="issues">Issues Reported</option>
+              <option value="recycling">Recycling Rates</option>
+            </select>
+          </div>          
+          <div class="col-4 my-3">
+            <label for="dateRange" class="ml-5">Date Range:</label>
+            <input type="text" id="dateRange" placeholder="Select Date Range">
+          </div>
+          <div class="col-4 my-3">
+              <label for="area">Area:</label>
+              <input type="text" id="area" placeholder="Enter area name">
+          </div>
+          <div class="col-4 my-3">
+            <label for="displayType">Display As:</label>
+            <select id="displayType">
+              <option value="table">Table</option>
+              <option value="chart">Chart</option>
+            </select>
+          </div>
+        </div>
+      </form>
+
+      <div id="reportOutput">
+        <canvas id="reportChart" width="400" height="200" style="display: none;"></canvas>
+        <div id="reportTable" style="display: none;"></div>
+      </div>
+    </div>
+  </div>
+  <footer>
+    <p>&copy; 2024 CWCL. All rights reserved.</p>
+  </footer>
+  <script src="js/bootstrap/bootstrap.min.js"></script>
+  <script>
+    document.addEventListener("DOMContentLoaded", function () {
+      flatpickr("#dateRange", {
+        mode: "range",
+        dateFormat: "Y-m-d",
+        onChange: generateReport
+      });
+
+      document.getElementById("reportType").addEventListener("change", generateReport);
+      document.getElementById("displayType").addEventListener("change", generateReport);
+      document.getElementById("area").addEventListener("input", generateReport);
+    });
+
+    function generateReport() {
+      const reportType = document.getElementById("reportType").value;
+      const dateRange = document.getElementById("dateRange").value;
+      const area = document.getElementById("area").value;
+      const displayType = document.getElementById("displayType").value;
+      const reportOutput = document.getElementById("reportOutput");
+      const chartCanvas = document.getElementById("reportChart");
+      const reportTable = document.getElementById("reportTable");
+
+      if (!dateRange) {
+        alert("Please select a date range.");
+        return;
+      }
+
+      reportOutput.style.display = "block";
+      chartCanvas.style.display = "none";
+      reportTable.style.display = "none";
+
+      let labels, data, label;
+
+      if (reportType === "pickup") {
+        labels = ["2023-01-01", "2023-01-02", "2023-01-03"];
+        data = [20, 18, 25];
+        label = "Total Pickups";
+      } else if (reportType === "issues") {
+        labels = ["2023-01-01", "2023-01-02", "2023-01-03"];
+        data = [5, 3, 6];
+        label = "Issues Reported";
+      } else if (reportType === "recycling") {
+        labels = ["2023-01-01", "2023-01-02", "2023-01-03"];
+        data = [45, 48, 50];
+        label = "Recycling Rate (%)";
+      }
+
+      if (displayType === "chart") {
+        chartCanvas.style.display = "block";
+        if (chartCanvas.chartInstance) {
+          chartCanvas.chartInstance.destroy();
+        }
+        chartCanvas.chartInstance = new Chart(chartCanvas, {
+          type: 'bar',
+          data: {
+            labels: labels,
+            datasets: [{
+              label: label,
+              data: data,
+              backgroundColor: 'rgba(75, 192, 192, 0.2)',
+              borderColor: 'rgba(75, 192, 192, 1)',
+              borderWidth: 1
+            }]
+          },
+          options: {
+            responsive: true,
+            scales: {
+              y: {
+                beginAtZero: true
+              }
+            }
+          }
+        });
+      } else if (displayType === "table") {
+        reportTable.style.display = "block";
+        let tableHTML = `<h3>${label}</h3><p>Area: ${area || "All areas"}</p><p>Date Range: ${dateRange}</p>`;
+        tableHTML += "<table><tr><th>Date</th><th>" + label + "</th></tr>";
+        for (let i = 0; i < labels.length; i++) {
+          tableHTML += `<tr><td>${labels[i]}</td><td>${data[i]}</td></tr>`;
+        }
+        tableHTML += "</table>";
+        reportTable.innerHTML = tableHTML;
+      }
+    }
+  </script>
+</body>
+
+</html>
