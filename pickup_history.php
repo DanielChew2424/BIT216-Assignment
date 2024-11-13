@@ -81,6 +81,17 @@
                         $result2 = mysqli_query($dbConnection, $sql2);
 
                         if(mysqli_num_rows($result2) == 0){
+                            echo '<table class="table table-bordered" id="pickup-history-table" style="display: none;">';
+                            echo '<thead>';
+                            echo '<tr>';
+                            echo '    <th>Waste Type</th>';
+                            echo '    <th>Pickup Date</th>';
+                            echo '    <th>Pickup Time</th>';
+                            echo '    <th>Confirmation Status</th>';
+                            echo '</tr>';
+                            echo '</thead>';
+                            echo '<tbody></tbody>';
+                            echo '</table>';
                             echo '<div class="no-his-container">';
                             echo '<p>No Pickup Record In Database</p>';
                             echo '</div>';
@@ -110,6 +121,9 @@
 
                             echo '</tbody>';
                             echo '</table>';
+                            echo '<div class="no-his-container" style="display: none;">';
+                            echo '<p>No Pickup Record In Database</p>';
+                            echo '</div>';
                         }
                     ?>
                 </div>
@@ -124,20 +138,20 @@
     </footer>
 
     <script>
-        // Flatpickr initialization for date range selection
         flatpickr("#date-range", {
             mode: "range",
-            dateFormat: "Y-m-d",  // You can adjust the date format as needed
+            dateFormat: "Y-m-d",
             onChange: function(selectedDates) {
                 filterHistory();
             }
         });
 
-        // Function to filter history table based on date and waste type
         function filterHistory() {
             let dateRange = document.getElementById('date-range').value;
             let wasteType = document.getElementById('type').value;
             let rows = document.querySelectorAll('#pickup-history-table tbody tr');
+            let noHistoryContainer = document.querySelector('.no-his-container');
+            let visibleRowCount = 0;
 
             rows.forEach(row => {
                 let rowDate = row.querySelector('td:nth-child(2)').textContent;
@@ -145,7 +159,6 @@
 
                 let showRow = true;
 
-                // Filter by date range
                 if (dateRange) {
                     let [startDate, endDate] = dateRange.split(' to ').map(date => new Date(date.trim()));
                     let pickupDate = new Date(rowDate);
@@ -154,17 +167,20 @@
                     }
                 }
 
-                // Filter by waste type
                 if (wasteType !== 'all' && !rowWasteType.includes(wasteType)) {
                     showRow = false;
                 }
 
-                // Show or hide the row based on the filter conditions
                 row.style.display = showRow ? '' : 'none';
+
+                if (showRow) {
+                    visibleRowCount++;
+                }
             });
+
+            noHistoryContainer.style.display = visibleRowCount === 0 ? 'block' : 'none';
         }
 
-        // Event listeners for filtering
         document.getElementById('type').addEventListener('change', filterHistory);
     </script>
 </body>
