@@ -77,7 +77,7 @@
                         $row = mysqli_fetch_assoc($result);
                         $userID = $row['userID'];
 
-                        $sql2 = "SELECT * FROM pickupHistory WHERE userID = '$userID'";
+                        $sql2 = "SELECT * FROM pickupHistory WHERE userID = '$userID' ORDER BY pickupDate ASC";
                         $result2 = mysqli_query($dbConnection, $sql2);
 
                         if(mysqli_num_rows($result2) == 0){
